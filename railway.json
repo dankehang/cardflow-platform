@@ -2,12 +2,17 @@
   "build": {
     "builder": "NIXPACKS",
     "nixpacksConfig": {
+      "providers": {
+        "node": {
+          "version": "18.x"
+        }
+      },
       "phases": {
         "setup": {
           "pkgs": ["nodejs", "npm"]
         },
         "install": {
-          "cmd": "npm install"
+          "cmd": "npm install --no-fund --no-audit"
         },
         "build": {
           "cmd": "echo 'Build completed'"
