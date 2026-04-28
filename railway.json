@@ -4,21 +4,21 @@
     "nixpacksConfig": {
       "phases": {
         "setup": {
-          "pkgs": ["nodejs", "npm", "bash"]
+          "pkgs": ["nodejs", "npm"]
         },
         "install": {
-          "cmd": "cd backend && chmod +x start.sh && npm install"
+          "cmd": "cd backend && npm install && npm list express-validator"
         },
         "build": {
           "cmd": "cd backend && echo 'Build completed'"
         }
       },
       "start": {
-        "cmd": "cd backend && ./start.sh"
+        "cmd": "cd backend && npm start"
       }
     }
   },
   "deploy": {
-    "startCommand": "cd backend && ./start.sh"
+    "startCommand": "cd backend && npm start"
   }
 }
