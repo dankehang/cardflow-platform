@@ -10,7 +10,7 @@
           "pkgs": ["nodejs", "npm"]
         },
         "install": {
-          "cmd": "cd backend && rm -rf node_modules package-lock.json && npm install --production"
+          "cmd": "cd backend && npm install"
         },
         "build": {
           "cmd": "cd backend && echo 'Build completed'"
