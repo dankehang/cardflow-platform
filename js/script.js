@@ -187,8 +187,8 @@ closeModalBtns.forEach(btn => {
 // 开发环境
 // const API_BASE_URL = 'http://localhost:5000/api';
 
-// 生产环境（Vercel Functions）
-const API_BASE_URL = '/api';
+// 生产环境（Railway后端）
+const API_BASE_URL = 'https://cardflow-platform.up.railway.app/api';
 
 // 显示成功提示
 function showSuccess(title, message) {
