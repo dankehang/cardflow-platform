@@ -2,12 +2,15 @@
   "build": {
     "builder": "NIXPACKS",
     "nixpacksConfig": {
+      "env": {
+        "NODE_ENV": "production"
+      },
       "phases": {
         "setup": {
-          "pkgs": ["nodejs"]
+          "pkgs": ["nodejs", "npm"]
         },
         "install": {
-          "cmd": "cd backend && npm install"
+          "cmd": "cd backend && rm -rf node_modules package-lock.json && npm install --production"
         },
         "build": {
           "cmd": "cd backend && echo 'Build completed'"
