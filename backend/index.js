@@ -9,12 +9,7 @@ dotenv.config();
 const app = express();
 
 // 中间件
-const corsOptions = {
-    origin: ['https://cardflow-platform-xpu2.vercel.app', 'https://cardflow-platform.vercel.app'],
-    credentials: true,
-    optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
