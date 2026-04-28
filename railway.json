@@ -7,19 +7,18 @@
           "pkgs": ["nodejs"]
         },
         "install": {
-          "cmd": "npm install"
+          "cmd": "cd backend && npm install"
         },
         "build": {
-          "cmd": "echo 'Build completed'"
+          "cmd": "cd backend && echo 'Build completed'"
         }
       },
       "start": {
-        "cmd": "npm start"
+        "cmd": "cd backend && npm start"
       }
     }
   },
   "deploy": {
-    "startCommand": "npm start",
-    "rootDir": "backend"
+    "startCommand": "cd backend && npm start"
   }
 }
