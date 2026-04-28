@@ -1,27 +1,33 @@
 {
-  "name": "cardflow-platform",
+  "name": "medical-job-monitor",
   "version": "1.0.0",
-  "description": "发卡平台前端和后端项目",
-  "main": "index.html",
+  "description": "长沙市医学检验招聘信息监测系统",
+  "main": "server/index.js",
   "scripts": {
-    "dev": "python3 -m http.server 8000",
-    "build": "echo 'Building static files...'"
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "card",
-    "issuing",
-    "platform",
-    "frontend",
-    "backend"
+    "medical",
+    "job",
+    "monitor",
+    "recruitment",
+    "crawler"
   ],
-  "author": "CardFlow Team",
+  "author": "Medical Job Monitor Team",
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mongoose": "^8.0.3",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1"
+    "node-schedule": "^2.1.1",
+    "nodemailer": "^6.9.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
