@@ -71,9 +71,8 @@ UserSchema.methods.matchPassword = async function(enteredPassword) {
 
 const User = mongoose.model('User', UserSchema);
 
-// 认证路由
-// 注册
-app.post('/api/auth/register', async (req, res) => {
+// 注册处理函数
+const handleRegister = async (req, res) => {
     await connectDB();
     
     try {
@@ -108,10 +107,10 @@ app.post('/api/auth/register', async (req, res) => {
         console.error('Register error:', error);
         res.status(500).json({ message: 'Server error' });
     }
-});
+};
 
-// 登录
-app.post('/api/auth/login', async (req, res) => {
+// 登录处理函数
+const handleLogin = async (req, res) => {
     await connectDB();
     
     try {
@@ -148,11 +147,24 @@ app.post('/api/auth/login', async (req, res) => {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Server error' });
     }
-});
+};
 
-// 健康检查
-app.get('/api/health', (req, res) => {
-    res.json({ message: 'CardFlow API is running' });
-});
-
-module.exports = app;
+// Vercel serverless函数处理
+module.exports = (req, res) => {
+    // 根据请求路径和方法路由到相应的处理函数
+    const { path, method } = req;
+    
+    if (path === '/api/auth/register' && method === 'POST') {
+        return handleRegister(req, res);
+    }
+    
+    if (path === '/api/auth/login' && method === 'POST') {
+        return handleLogin(req, res);
+    }
+    
+    if (path === '/api/health' && method === 'GET') {
+        return res.json({ message: 'CardFlow API is running' });
+    }
+    
+    res.status(404).json({ message: 'Not found' });
+};
