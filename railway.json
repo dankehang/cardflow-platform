@@ -2,23 +2,26 @@
   "build": {
     "builder": "NIXPACKS",
     "nixpacksConfig": {
+      "env": {
+        "NODE_ENV": "development"
+      },
       "phases": {
         "setup": {
           "pkgs": ["nodejs", "npm"]
         },
         "install": {
-          "cmd": "cd backend && npm install && npm list express-validator"
+          "cmd": "cd backend && npm install"
         },
         "build": {
-          "cmd": "cd backend && echo 'Build completed'"
+          "cmd": "cd backend && npm install express-validator && echo 'Build completed'"
         }
       },
       "start": {
-        "cmd": "cd backend && npm start"
+        "cmd": "cd backend && npm install express-validator && npm start"
       }
     }
   },
   "deploy": {
-    "startCommand": "cd backend && npm start"
+    "startCommand": "cd backend && npm install express-validator && npm start"
   }
 }
