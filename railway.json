@@ -2,26 +2,23 @@
   "build": {
     "builder": "NIXPACKS",
     "nixpacksConfig": {
-      "env": {
-        "NODE_ENV": "production"
-      },
       "phases": {
         "setup": {
-          "pkgs": ["nodejs", "npm"]
+          "pkgs": ["nodejs", "npm", "bash"]
         },
         "install": {
-          "cmd": "cd backend && npm install"
+          "cmd": "cd backend && chmod +x start.sh && npm install"
         },
         "build": {
           "cmd": "cd backend && echo 'Build completed'"
         }
       },
       "start": {
-        "cmd": "cd backend && npm start"
+        "cmd": "cd backend && ./start.sh"
       }
     }
   },
   "deploy": {
-    "startCommand": "cd backend && npm start"
+    "startCommand": "cd backend && ./start.sh"
   }
 }
