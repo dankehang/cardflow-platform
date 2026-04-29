@@ -9,7 +9,7 @@
       },
       "phases": {
         "setup": {
-          "pkgs": ["nodejs", "npm"]
+          "pkgs": ["nodejs", "npm", "chromium", "nss", "freetype", "harfbuzz", "ca-certificates", "ttf-freefont"]
         },
         "install": {
           "cmd": "npm install --no-fund --no-audit"

@@ -1,42 +1,74 @@
-const axios = require('axios');
+const puppeteer = require('puppeteer');
 
 const crawlZhaopin = async () => {
     const jobs = [];
+    let browser = null;
+    
     try {
-        const keyword = encodeURIComponent('医学检验');
-        const url = `https://fe-api.zhaopin.com/c/i/sou?pageSize=30&cityId=538&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kw=${keyword}&kt=3`;
-        
-        const response = await axios.get(url, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'application/json, text/plain, */*',
-                'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-                'Referer': 'https://sou.zhaopin.com/',
-                'Origin': 'https://sou.zhaopin.com'
-            },
-            timeout: 15000
+        browser = await puppeteer.launch({
+            headless: 'new',
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--disable-gpu'
+            ]
         });
         
-        if (response.data && response.data.data && response.data.data.results) {
-            response.data.data.results.forEach(item => {
-                if (item.jobName && item.company.name) {
-                    jobs.push({
-                        title: item.jobName,
-                        company: item.company.name,
-                        location: item.city.display || '长沙',
-                        salary: item.salary || '面议',
-                        requirements: item.positionDesc || '',
-                        description: '',
-                        source: '智联招聘',
-                        url: `https://jobs.zhaopin.com/${item.number}.htm`
+        const page = await browser.newPage();
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+        
+        const url = 'https://sou.zhaopin.com/?jl=538&kw=医学检验&kt=3';
+        console.log(`正在访问: ${url}`);
+        
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+        await page.waitForSelector('.joblist-box__item, .positionlist', { timeout: 10000 }).catch(() => {});
+        
+        const jobList = await page.evaluate(() => {
+            const items = [];
+            document.querySelectorAll('.joblist-box__item, .positionlist .item').forEach(card => {
+                const titleEl = card.querySelector('.joblist-box__item-title, .job__title');
+                const companyEl = card.querySelector('.joblist-box__item-company, .companyinfo__top a');
+                const locationEl = card.querySelector('.joblist-box__item-workcity, .job__area');
+                const salaryEl = card.querySelector('.joblist-box__item-salary, .job__money');
+                const linkEl = card.querySelector('a');
+                
+                if (titleEl && companyEl) {
+                    items.push({
+                        title: titleEl.textContent.trim(),
+                        company: companyEl.textContent.trim(),
+                        location: locationEl ? locationEl.textContent.trim() : '长沙',
+                        salary: salaryEl ? salaryEl.textContent.trim() : '面议',
+                        url: linkEl ? linkEl.href : ''
                     });
                 }
             });
-        }
+            return items;
+        });
+        
+        jobList.forEach(job => {
+            if (job.title && job.company && job.url) {
+                jobs.push({
+                    ...job,
+                    requirements: '',
+                    description: '',
+                    source: '智联招聘'
+                });
+            }
+        });
+        
         console.log(`✅ 智联招聘爬取完成，共 ${jobs.length} 条职位`);
     } catch (error) {
         console.error('❌ 智联招聘爬取失败:', error.message);
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
     }
+    
     return jobs;
 };
 

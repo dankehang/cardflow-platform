@@ -3,17 +3,15 @@ const CrawlLog = require('../models/CrawlLog');
 const crawlZhaopin = require('../crawlers/zhaopin');
 const crawl51job = require('../crawlers/51job');
 const crawlBoss = require('../crawlers/boss');
-const crawlMock = require('../crawlers/mock');
 const sendEmail = require('./email');
 
 const crawlAll = async () => {
     console.log('🔍 开始爬取所有招聘网站...');
     
     const crawlers = [
-        { name: '智联招聘', crawl: crawlZhaopin },
-        { name: '前程无忧', crawl: crawl51job },
         { name: 'Boss直聘', crawl: crawlBoss },
-        { name: '模拟数据', crawl: crawlMock }
+        { name: '智联招聘', crawl: crawlZhaopin },
+        { name: '前程无忧', crawl: crawl51job }
     ];
 
     let allJobs = [];
