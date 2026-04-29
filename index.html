@@ -58,9 +58,14 @@
         <div class="jobs-section">
             <div class="section-header">
                 <h2>最新职位</h2>
-                <button id="refresh-btn" class="btn-primary">
-                    <i class="fas fa-refresh"></i> 手动刷新
-                </button>
+                <div class="header-buttons">
+                    <button id="add-job-btn" class="btn-success">
+                        <i class="fas fa-plus"></i> 添加职位
+                    </button>
+                    <button id="refresh-btn" class="btn-primary">
+                        <i class="fas fa-refresh"></i> 手动刷新
+                    </button>
+                </div>
             </div>
             <div class="jobs-list" id="jobs-list">
             </div>
@@ -75,6 +80,64 @@
             <h2 id="modal-title">职位详情</h2>
             <div id="modal-body">
             </div>
+        </div>
+    </div>
+
+    <div class="modal" id="add-job-modal">
+        <div class="modal-content modal-large">
+            <span class="close-modal">&times;</span>
+            <h2><i class="fas fa-plus-circle"></i> 添加新职位</h2>
+            <form id="add-job-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>* 职位标题</label>
+                        <input type="text" id="job-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>* 公司名称</label>
+                        <input type="text" id="job-company" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>工作地点</label>
+                        <input type="text" id="job-location" placeholder="长沙">
+                    </div>
+                    <div class="form-group">
+                        <label>薪资范围</label>
+                        <input type="text" id="job-salary" placeholder="8k-12k">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>职位来源</label>
+                    <select id="job-source">
+                        <option value="手动添加">手动添加</option>
+                        <option value="智联招聘">智联招聘</option>
+                        <option value="前程无忧">前程无忧</option>
+                        <option value="Boss直聘">Boss直聘</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>职位链接</label>
+                    <input type="url" id="job-url" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label>任职要求</label>
+                    <textarea id="job-requirements" rows="4" placeholder="输入任职要求..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>职位描述</label>
+                    <textarea id="job-description" rows="4" placeholder="输入职位描述..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary btn-large">
+                        <i class="fas fa-check"></i> 提交
+                    </button>
+                    <button type="button" class="btn-secondary btn-large close-add-modal">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

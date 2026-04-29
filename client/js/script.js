@@ -7,7 +7,11 @@ let currentSalary = 'all';
 
 async function fetchJobs() {
     try {
-        const url = `${API_BASE_URL}/jobs?page=${currentPage}&limit=10&search=${encodeURIComponent(currentSearch)}&source=${currentSource}&salary=${currentSalary}`;
+        let url = `${API_BASE_URL}/jobs?page=${currentPage}&limit=10`;
+        if (currentSearch) url += `&keyword=${encodeURIComponent(currentSearch)}`;
+        if (currentSource !== 'all') url += `&source=${currentSource}`;
+        if (currentSalary !== 'all') url += `&salary=${currentSalary}`;
+        
         const response = await fetch(url);
         const data = await response.json();
         
@@ -29,8 +33,8 @@ async function fetchStats() {
         
         if (data.success) {
             document.getElementById('total-count').textContent = data.data.total;
-            document.getElementById('today-count').textContent = data.data.todayCount;
-            renderSourceStats(data.data.sourceStats);
+            document.getElementById('today-count').textContent = data.data.todayNew;
+            renderSourceStats(data.data.bySource);
         }
     } catch (error) {
         console.error('获取统计数据失败:', error);
@@ -42,13 +46,13 @@ function renderJobs(jobs) {
     container.innerHTML = '';
     
     if (jobs.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 40px;">暂无职位数据</p>';
+        container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 40px;">暂无职位数据，点击"添加职位"手动添加或"手动刷新"尝试爬取</p>';
         return;
     }
     
     jobs.forEach(job => {
         const card = document.createElement('div');
-        card.className = `job-card${job.isNew ? ' new' : ''}`;
+        card.className = 'job-card';
         card.addEventListener('click', () => showJobDetail(job));
         
         card.innerHTML = `
@@ -70,6 +74,11 @@ function renderJobs(jobs) {
 function renderSourceStats(stats) {
     const container = document.getElementById('source-stats');
     container.innerHTML = '';
+    
+    if (!stats || stats.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6b7280; width: 100%;">暂无统计数据</p>';
+        return;
+    }
     
     stats.forEach(stat => {
         const card = document.createElement('div');
@@ -157,14 +166,43 @@ function showJobDetail(job) {
             <span class="label">职位描述</span>
             <span class="value">${job.description || '暂无'}</span>
         </div>
-        <button class="apply-btn" onclick="window.open('${job.url}', '_blank')">前往应聘</button>
+        ${job.url ? `<button class="apply-btn" onclick="window.open('${job.url}', '_blank')">前往应聘</button>` : ''}
     `;
     
     modal.style.display = 'block';
 }
 
-function closeModal() {
-    document.getElementById('job-modal').style.display = 'none';
+function closeModal(modalId = 'job-modal') {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function openAddJobModal() {
+    document.getElementById('add-job-modal').style.display = 'block';
+}
+
+async function addJob(formData) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/jobs`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('添加成功！');
+            closeModal('add-job-modal');
+            document.getElementById('add-job-form').reset();
+            fetchJobs();
+            fetchStats();
+        } else {
+            alert('添加失败: ' + data.message);
+        }
+    } catch (error) {
+        alert('添加失败: ' + error.message);
+    }
 }
 
 document.getElementById('search-btn').addEventListener('click', () => {
@@ -215,12 +253,44 @@ document.getElementById('refresh-btn').addEventListener('click', async () => {
     btn.innerHTML = '<i class="fas fa-refresh"></i> 手动刷新';
 });
 
-document.querySelector('.close-modal').addEventListener('click', closeModal);
+document.getElementById('add-job-btn').addEventListener('click', openAddJobModal);
 
-document.getElementById('job-modal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('job-modal')) {
-        closeModal();
-    }
+document.getElementById('add-job-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const formData = {
+        title: document.getElementById('job-title').value,
+        company: document.getElementById('job-company').value,
+        location: document.getElementById('job-location').value,
+        salary: document.getElementById('job-salary').value,
+        requirements: document.getElementById('job-requirements').value,
+        description: document.getElementById('job-description').value,
+        source: document.getElementById('job-source').value,
+        url: document.getElementById('job-url').value
+    };
+    
+    addJob(formData);
+});
+
+document.querySelectorAll('.close-modal').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const modal = e.target.closest('.modal');
+        modal.style.display = 'none';
+    });
+});
+
+document.querySelectorAll('.close-add-modal').forEach(btn => {
+    btn.addEventListener('click', () => {
+        closeModal('add-job-modal');
+    });
+});
+
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', () => {
